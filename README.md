@@ -1,2 +1,0 @@
-# ProjectTitan
-Coming soon

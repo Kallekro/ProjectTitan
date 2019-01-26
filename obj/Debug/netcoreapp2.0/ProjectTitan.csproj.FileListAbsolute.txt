@@ -1,0 +1,11 @@
+/home/bcvb/git-repos/ProjectTitan/obj/Debug/netcoreapp2.0/ProjectTitan.csprojAssemblyReference.cache
+/home/bcvb/git-repos/ProjectTitan/obj/Debug/netcoreapp2.0/ProjectTitan.csproj.CoreCompileInputs.cache
+/home/bcvb/git-repos/ProjectTitan/obj/Debug/netcoreapp2.0/ProjectTitan.AssemblyInfoInputs.cache
+/home/bcvb/git-repos/ProjectTitan/obj/Debug/netcoreapp2.0/ProjectTitan.AssemblyInfo.cs
+/home/bcvb/git-repos/ProjectTitan/bin/Debug/netcoreapp2.0/ProjectTitan.deps.json
+/home/bcvb/git-repos/ProjectTitan/bin/Debug/netcoreapp2.0/ProjectTitan.runtimeconfig.json
+/home/bcvb/git-repos/ProjectTitan/bin/Debug/netcoreapp2.0/ProjectTitan.runtimeconfig.dev.json
+/home/bcvb/git-repos/ProjectTitan/bin/Debug/netcoreapp2.0/ProjectTitan.dll
+/home/bcvb/git-repos/ProjectTitan/bin/Debug/netcoreapp2.0/ProjectTitan.pdb
+/home/bcvb/git-repos/ProjectTitan/obj/Debug/netcoreapp2.0/ProjectTitan.dll
+/home/bcvb/git-repos/ProjectTitan/obj/Debug/netcoreapp2.0/ProjectTitan.pdb
