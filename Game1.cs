@@ -7,13 +7,16 @@ namespace ProjectTitan
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        SpriteBatch spriteBatch; 
+
+        GameManager gameManager;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            gameManager = new GameManager();
         }
 
         protected override void Initialize()
@@ -28,6 +31,8 @@ namespace ProjectTitan
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            gameManager.LoadResources(this);
+            gameManager.Init();
         }
 
         protected override void Update(GameTime gameTime)
@@ -45,6 +50,9 @@ namespace ProjectTitan
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            gameManager.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
