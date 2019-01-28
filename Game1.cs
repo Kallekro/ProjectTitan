@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -40,7 +41,19 @@ namespace ProjectTitan
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+
+
+            gameManager.dots.Update(gameTime);
             // TODO: Add your update logic here
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                gameManager.dots.SetCurrentAnimation(0);
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.B))
+            {
+                gameManager.dots.SetCurrentAnimation(1);
+            }
+
 
             base.Update(gameTime);
         }
