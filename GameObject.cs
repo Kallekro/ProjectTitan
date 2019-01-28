@@ -6,9 +6,8 @@ namespace ProjectTitan
 {
     public class GameObject
     {
-        private Vector2 m_position;
-        private Texture2D m_texture;
-
+        protected Texture2D m_texture;
+        protected Vector2 m_position;
         public Vector2 Position
         {
             get { return new Vector2(m_position.X, m_position.Y + m_texture.Height); }
@@ -29,8 +28,6 @@ namespace ProjectTitan
         {
             get { return new Vector2(m_position.X + m_texture.Width, m_position.Y + m_texture.Height); }
         }
-
-
 
         public int TextureLength { get { return m_texture.Width; } }
         public int TextureHeight { get { return m_texture.Height; } }
