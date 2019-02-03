@@ -22,7 +22,7 @@ namespace ProjectTitan
         float m_timer;
 
 
-        public AnimatedGameObject(Vector2 position, Texture2D texture, int rows, int columns) : base(position, texture)
+        public AnimatedGameObject(Vector2 position, Texture2D texture, int rows, int columns) : base(position, texture, 0)
         {
             // size of spritesheet
             m_num_rows = rows;

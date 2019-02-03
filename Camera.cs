@@ -7,9 +7,6 @@ namespace ProjectTitan
 {
     public class Camera
     {
-        int m_screen_width;
-        int m_screen_height;
-
         public Camera(int screen_width, int screen_height)
         {
             Zoom = 1;
@@ -18,16 +15,24 @@ namespace ProjectTitan
             Origin = Vector2.Zero;
             Position = Vector2.Zero;
 
-            m_screen_width = screen_width;
-            m_screen_height = screen_height;
+            ScreenWidth = screen_width;
+            ScreenHeight = screen_height;
         }
+
+        public int ScreenWidth { get; set; }
+        public int ScreenHeight { get; set; }
 
         public float Zoom { get; set; }
         public Vector2 Position { get; set; }
         public Vector2 Center 
         { 
-            get { return new Vector2(Position.X - m_screen_width/2, Position.Y - m_screen_height/2); } 
-            set { Position = new Vector2(value.X + m_screen_width/2, value.Y + m_screen_height/2); }
+            get { return new Vector2(Position.X - ScreenWidth/2, Position.Y - ScreenHeight/2); } 
+            set { Position = new Vector2(value.X + ScreenWidth/2, value.Y + ScreenHeight/2); }
+        }
+        public Vector2 TopRightPosition 
+        { 
+            get { return new Vector2(Position.X - ScreenWidth, Position.Y); }
+            set { Position = new Vector2(value.X + ScreenWidth, value.Y); }
         }
         public float Rotation { get; set; }
         public Vector2 Origin { get; set; }
@@ -45,6 +50,11 @@ namespace ProjectTitan
         public void SetVertical(float y)
         {
             Position = new Vector2(Position.X, y);
+        }
+
+        public Point ScreenPointToWorld(Point screen_point) 
+        {
+            return screen_point - new Point((int)Position.X, (int)Position.Y); 
         }
 
         public Matrix GetTransform()
