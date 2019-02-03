@@ -8,8 +8,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ProjectTitan
 {
-
-
     public class GameManager
     {
         private List<GameObject> m_game_object_list;
@@ -23,10 +21,15 @@ namespace ProjectTitan
 
         Camera m_camera;
 
-        Texture2D texture;
         Texture2D dots_texture;
+        Texture2D UI_overlay;
 
+        UI ui;
+        Panel panel1;
+        Panel panel2;
         public AnimatedGameObject dots;
+        DB_Manager db_manager;
+
         Stage test_stage;
 
         public const bool DEBUG = false;
@@ -41,6 +44,16 @@ namespace ProjectTitan
             m_road_textures    = new Texture2D[3];
             m_scenery_textures = new Texture2D[3][];
             m_camera = new Camera(m_screen_width, m_screen_height);
+
+            // setup UI
+            ui = new UI(m_screen_width, m_screen_height);
+            db_manager = new DB_Manager();
+
+            //db_manager.CreateSaveDB("hallelujah");
+            //db_manager.DeleteSaveDB("hallelujah");
+            //db_manager.LoadDB("hallelujah");
+
+            //db_manager.LoadDataIntoDB();
 
         }
 
@@ -68,27 +81,35 @@ namespace ProjectTitan
                 // Sloped down scenery
                 m_scenery_textures[2] = new Texture2D[1] { game.Content.Load<Texture2D>("road_textures/sloped_down_scenery_1") };
             }
-            dots = new AnimatedGameObject(new Vector2(100, 100), dots_texture, 2, 3); 
+
 
             // Pink rect in middle
             pinky = game.Content.Load<Texture2D>("road_textures/pinky");
+            dots_texture = game.Content.Load<Texture2D>("textures/dots_sheet");
+            UI_overlay = game.Content.Load<Texture2D>("textures/UI_overlay");
 
         }
 
         public void Init()
         {
-            texture = game.Content.Load<Texture2D>("textures/keyboard_chords_schism");
-            dots_texture = game.Content.Load<Texture2D>("textures/dots_sheet");
+            dots = new AnimatedGameObject(new Vector2(100, 100), dots_texture, 2, 3);
 
             test_stage = new Stage(20, m_road_textures, m_scenery_textures, m_camera, pinky);
             test_stage.PlaceRoadSegments(0, m_screen_height / 2);
             test_stage.InitializeCamera();
+
+            // Init UI
+            panel1 = new Panel(ui.GetRootPanel, new Vector4(0.10f, 0.10f, 0.5f, 0.5f));
+            panel2 = new Panel(panel1, new Vector4(0.10f, 0.10f, 0.5f, 0.5f));
+            panel2.Enable = true;
+
+            panel1.Texture = UI_overlay;
+            panel2.Texture = UI_overlay;
         }
 
         public void Update(GameTime gameTime)
         {
-            /*
-            for (int i=0; i < game_object_list.Count; i++)
+
             KeyboardState keyboard_state = Keyboard.GetState();
             Vector2 direction = Vector2.Zero;
             float speed = 4.0f;
@@ -113,7 +134,6 @@ namespace ProjectTitan
             {
                 test_stage.MoveCamera(direction * speed);
             }
-            */
 
             dots.Update(gameTime);
         }
@@ -128,8 +148,14 @@ namespace ProjectTitan
             {
                 m_game_object_list[i].Draw(sprite_batch);
             }
-            dots.Draw(sprite_batch); 
+            dots.Draw(sprite_batch);
             sprite_batch.End();
+
+            // draw UI
+            sprite_batch.Begin();
+            ui.DrawUI(sprite_batch);
+            sprite_batch.End();
+
 
         }
     }
