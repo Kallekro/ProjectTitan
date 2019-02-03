@@ -14,7 +14,6 @@ namespace ProjectTitan
         Texture2D[][] m_scenery_textures;
         Texture2D m_bike_tex;
         Hashtable m_gui_object_textures;
-        private List<GUIObject> m_gui_object_list;
 
         Texture2D pinky; // Pink square for debugging
 
@@ -44,7 +43,6 @@ namespace ProjectTitan
             m_screen_width  = screen_width;
             m_screen_height = screen_height;
 
-            m_gui_object_list = new List<GUIObject>();
             m_gui_object_textures = new Hashtable();
             m_road_textures    = new Texture2D[5];
             m_scenery_textures = new Texture2D[5][];
@@ -119,7 +117,7 @@ namespace ProjectTitan
             panel1.Texture = UI_overlay;
             panel2.Texture = UI_overlay;
             m_stagemanager = new StageManager(m_road_textures, m_scenery_textures, m_bike_tex, m_camera, pinky);
-            m_gui_object_list.Add(new Slider(Vector2.Zero, (Texture2D)m_gui_object_textures["SliderContainer"],(Texture2D)m_gui_object_textures["Slider"], 50));
+            panel2.AddSlider(new Vector4(0.1f, 0.1f, 0.6f, 0.2f), (Texture2D)m_gui_object_textures["SliderContainer"], (Texture2D)m_gui_object_textures["Slider"], 50);
             m_game_started = true;
         }
 
@@ -131,13 +129,8 @@ namespace ProjectTitan
             m_stagemanager.HandleInput(keyboard_state, mouse_state);
             m_stagemanager.Update(gameTime, mouse_state);
 
-            // GUI
-            for (int i = 0; i < m_gui_object_list.Count; i++)
-            {
-                m_gui_object_list[i].Update(mouse_state);
-            }
-
             dots.Update(gameTime);
+            ui.UpdateUI(mouse_state);
             m_last_keyboardstate = keyboard_state;
         }
 
@@ -148,14 +141,6 @@ namespace ProjectTitan
             // World
             sprite_batch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, viewMatrix);
             m_stagemanager.Draw(sprite_batch);
-            sprite_batch.End();
-
-            // GUI
-            sprite_batch.Begin();
-            for (int i = 0; i < m_gui_object_list.Count; i++)
-            {
-                m_gui_object_list[i].Draw(sprite_batch);
-            }
             dots.Draw(sprite_batch);
             sprite_batch.End();
 

@@ -12,17 +12,20 @@ namespace ProjectTitan
 
         GameManager gameManager;
 
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            gameManager = new GameManager();
+
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            int screen_width = graphics.GraphicsDevice.Viewport.Bounds.Width;
+            int screen_height = graphics.GraphicsDevice.Viewport.Bounds.Height;
+            gameManager = new GameManager(screen_width, screen_height);
 
             base.Initialize();
         }
@@ -31,7 +34,6 @@ namespace ProjectTitan
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
             gameManager.LoadResources(this);
             gameManager.Init();
         }
@@ -43,7 +45,6 @@ namespace ProjectTitan
 
 
 
-            gameManager.dots.Update(gameTime);
             // TODO: Add your update logic here
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
@@ -54,6 +55,7 @@ namespace ProjectTitan
                 gameManager.dots.SetCurrentAnimation(1);
             }
 
+            gameManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -63,9 +65,7 @@ namespace ProjectTitan
             GraphicsDevice.Clear(Color.DarkSeaGreen);
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin();
             gameManager.Draw(spriteBatch);
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }
