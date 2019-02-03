@@ -21,7 +21,13 @@ namespace ProjectTitan
         float m_interval;
         float m_timer;
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:ProjectTitan.AnimatedGameObject"/> class.
+        /// </summary>
+        /// <param name="position">Position.</param>
+        /// <param name="texture">Texture.</param>
+        /// <param name="rows">Rows.</param>
+        /// <param name="columns">Columns.</param>
         public AnimatedGameObject(Vector2 position, Texture2D texture, int rows, int columns) : base(position, texture)
         {
             // size of spritesheet
@@ -29,6 +35,7 @@ namespace ProjectTitan
             m_num_columns = columns;
 
             m_current_frame = 0;
+            m_total_frames = rows * columns;
 
             // animation control
             m_current_animation = 0;
@@ -37,13 +44,20 @@ namespace ProjectTitan
             m_interval = 500.0f;
         }
 
+        /// <summary>
+        /// Sets the current animation.
+        /// </summary>
+        /// <param name="anim_idx">Animation index.</param>
         public void SetCurrentAnimation(int anim_idx)
         {
             m_current_animation = anim_idx;
             m_current_frame = m_current_animation * m_num_columns;
         }
 
-
+        /// <summary>
+        /// Updates the current animation.
+        /// </summary>
+        /// <param name="gameTime">Game time.</param>
         public void Update(GameTime gameTime)
         { 
             m_timer += gameTime.ElapsedGameTime.Milliseconds;
@@ -59,6 +73,10 @@ namespace ProjectTitan
             }
         }
 
+        /// <summary>
+        /// Draw with the specified spritebatch.
+        /// </summary>
+        /// <param name="spritebatch">Spritebatch.</param>
         override public void Draw(SpriteBatch spritebatch)
         {
             int frame_width = m_texture.Width / m_num_columns;
