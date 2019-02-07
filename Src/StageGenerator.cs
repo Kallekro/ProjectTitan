@@ -59,7 +59,7 @@ namespace ProjectTitan
             Hashtable down5_table = new Hashtable
             {
                 { SegmentType.Flat,   new Vector2(0, 1) },
-                { SegmentType.Down5,  Vector2.Zero },
+                { SegmentType.Down5,  new Vector2(m_stagemanager.RoadHeight - m_road_textures[(int)SegmentType.Down5].Height, 0) },
                 { SegmentType.Down10, new Vector2(m_stagemanager.RoadHeight - m_road_textures[(int)SegmentType.Down10].Height, 2) },
             };
 

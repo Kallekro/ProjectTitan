@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,28 +10,30 @@ using Microsoft.Xna.Framework.Input;
 //    and make Panels and other UI elements inherit the properties
 
 
-namespace ProjectTitan
+namespace ProjectTitan.UI
 {
-
-    public class UI
+    public class UI_Manager
     {
+
         private int m_scr_width;
         private int m_scr_height;
 
         private Panel m_root_panel;
         public Panel GetRootPanel { get { return m_root_panel; } }
 
+        public Hashtable TextureDict { get; set; }
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ProjectTitan.UI"/> class.
         /// </summary>
         /// <param name="scr_width">Screen width.</param>
         /// <param name="scr_height">Screen height.</param>
-        public UI(int scr_width, int scr_height)
+        public UI_Manager(int scr_width, int scr_height)
         {
             m_scr_width = scr_width;
             m_scr_height = scr_height;
 
-            m_root_panel = new Panel(null, new Vector4(0, 0, scr_width, scr_height));
+            m_root_panel = new Panel(null, new Vector4(0, 0, scr_width, scr_height), this);
+            m_root_panel.Init();
         }
 
         public void DrawUI(SpriteBatch sprite_batch)
@@ -42,12 +45,15 @@ namespace ProjectTitan
         {
             m_root_panel.Update(mousestate);
         }
+
+
+        /// 
     }
 
     public class UI_Element
     {
         protected Panel m_parent;
-        protected Vector4 m_relpos;
+        protected Vector4 m_relrect;
         protected Rectangle m_pos;
 
         protected bool m_enabled;
@@ -56,30 +62,54 @@ namespace ProjectTitan
 
         protected MouseState m_last_mousestate;
 
+        protected RasterizerState m_non_scissor_rast_state;
+        protected RasterizerState m_scissor_rast_state;
+
+
+        protected UI_Manager m_ui_manager;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ProjectTitan.UI_Element"/> class.
         /// </summary>
         /// <param name="parent">Panel Parent of the UI Element.</param>
         /// <param name="relpos">Relative position to the parent.</param>
         /// <param name="texture">Texture.</param>
-        public UI_Element (Panel parent, Vector4 relpos) {
+        public UI_Element (Panel parent, Vector4 relrect, UI_Manager ui_manager)
+        {
+            m_ui_manager = ui_manager;
             m_parent = parent;
-            m_relpos = relpos;
+            m_relrect = relrect;
+        }
+
+        public void Init(Vector2 size)
+        {
+            m_relrect = new Vector4(m_relrect.X, m_relrect.Y, size.X / m_parent.GetPosRect.Width, size.Y / m_parent.GetPosRect.Height);
+            Init();
+        }
+
+        public void Init()
+        {
             m_enabled = true;
             m_last_mousestate = new MouseState();
 
-            if (m_parent != null) {
-                m_pos = RelativeToRealPosition(m_parent.GetPosRect, m_relpos);
+            if (m_parent != null)
+            {
+                m_pos = RelativeToRealPosition(m_parent.GetPosRect, m_relrect);
                 m_parent.AddChild(this);
             }
-            else { // If root panel, the relative position is not relative
-                m_pos = new Rectangle((int)relpos.X, (int)relpos.Y, (int)relpos.Z, (int)relpos.W);
+            else
+            { // If root panel, the relative position is not relative
+                m_pos = new Rectangle((int)m_relrect.X, (int)m_relrect.Y, (int)m_relrect.Z, (int)m_relrect.W);
             }
+
+            m_non_scissor_rast_state = new RasterizerState { ScissorTestEnable = false };
+            m_scissor_rast_state = new RasterizerState { ScissorTestEnable = true };
         }
+
 
         virtual public void Draw(SpriteBatch sprite_batch)
         {
-           
+            Console.WriteLine("DRAW BASE FOR UI_ELEMENT METHOD SHOULD NOT BE CALLED");
         }
 
         virtual public void Update(MouseState mouse_state)
@@ -96,62 +126,6 @@ namespace ProjectTitan
             int height = (int)(parent_rect.Height * rel_rect.W);
 
             return new Rectangle(x, y, width, height);
-        }
-
-    }
-
-    public class Panel : UI_Element
-    {
-        protected Texture2D m_texture;
-        public Texture2D Texture { set { m_texture = value; } }
-
-        protected List<UI_Element> m_childlist;
-
-        public void AddChild(UI_Element ui_ele) => m_childlist.Add(ui_ele);
-        public void AddSlider(Vector4 relpos, Texture2D container_texture, Texture2D slider_texture, int start_value)
-        {
-            AddChild(new Slider(this, relpos, container_texture, slider_texture, start_value));
-        }
-
-        public Panel(Panel parent, Vector4 relpos) : base(parent, relpos)
-        {
-            m_childlist = new List<UI_Element>();
-        }
-
-        public override void Draw(SpriteBatch sprite_batch)
-        {
-            if (m_enabled && m_texture != null)
-            {
-                sprite_batch.Draw(m_texture, m_pos, Color.White);
-            }
-            // If the ui_element that is being drawn has children - invoke their draw methods
-            if (m_childlist.Count > 0)
-            {
-                for (int i = 0; i < m_childlist.Count; i++)
-                {
-                    m_childlist[i].Draw(sprite_batch);
-                }
-            }
-        }
-
-        public override void Update(MouseState mouse_state)
-        {
-            if (m_childlist.Count > 0)
-            {
-                for (int i = 0; i < m_childlist.Count; i++)
-                {
-                    m_childlist[i].Update(mouse_state);
-                }
-            }
-            base.Update(mouse_state);
-        }
-    }
-
-    public class Button : UI_Element
-    {
-        public Button(Panel parent, Vector4 relpos) : base(parent, relpos)
-        {
-
         }
     }
 }

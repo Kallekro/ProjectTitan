@@ -5,11 +5,18 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using ProjectTitan.UI;
+
+// Globals
+public delegate int ButtonClickFuntion(params object[] args);
+
 
 namespace ProjectTitan
 {
     public class GameManager
     {
+
+
         Texture2D[] m_road_textures;
         Texture2D[][] m_scenery_textures;
         Texture2D m_bike_tex;
@@ -27,39 +34,50 @@ namespace ProjectTitan
         Texture2D dots_texture;
         Texture2D UI_overlay;
 
-        UI ui;
+        UI_Manager ui_manager;
         Panel panel1;
         Panel panel2;
+        Button button1;
+
+
         public AnimatedGameObject dots;
         DB_Manager db_manager;
 
         StageManager m_stagemanager;
+
 
         public const bool DEBUG = false;
 
 
         public GameManager(int screen_width, int screen_height)
         {
-            m_screen_width  = screen_width;
+            m_screen_width = screen_width;
             m_screen_height = screen_height;
 
             m_gui_object_textures = new Hashtable();
-            m_road_textures    = new Texture2D[5];
+            m_road_textures = new Texture2D[5];
             m_scenery_textures = new Texture2D[5][];
             m_camera = new Camera(m_screen_width, m_screen_height);
 
             // setup UI
-            ui = new UI(m_screen_width, m_screen_height);
+            ui_manager = new UI_Manager(m_screen_width, m_screen_height);
             db_manager = new DB_Manager();
 
-            //db_manager.CreateSaveDB("hallelujah");
-            //db_manager.DeleteSaveDB("hallelujah");
+            db_manager.DeleteSaveDB("hallelujah");
+            db_manager.CreateSaveDB("hallelujah");
             //db_manager.LoadDB("hallelujah");
 
-            //db_manager.LoadDataIntoDB();
+            db_manager.LoadDataIntoDB();
 
             m_last_keyboardstate = Keyboard.GetState();
         }
+
+        public int Print(params object[] args)
+        {
+            Console.WriteLine(args[0]);
+            return 0;
+        }
+
 
         public void LoadResources(Game game)
         {
@@ -95,8 +113,14 @@ namespace ProjectTitan
 
             // GUI
             m_gui_object_textures["Slider"] = game.Content.Load<Texture2D>("gui/slider");
-            m_gui_object_textures["SliderContainer"] = game.Content.Load<Texture2D>("gui/slider_container");
-
+            m_gui_object_textures["SliderContainerHorizontal"] = game.Content.Load<Texture2D>("gui/slider_container");
+            m_gui_object_textures["SliderContainerVertical"] = game.Content.Load<Texture2D>("gui/slider_container_vertical");
+            m_gui_object_textures["TableContainer"] = game.Content.Load<Texture2D>("gui/table");
+            m_gui_object_textures["TableRow"] = game.Content.Load<Texture2D>("gui/row");
+            m_gui_object_textures["ButtonDown"] = game.Content.Load<Texture2D>("gui/button_down");
+            m_gui_object_textures["ButtonUp"] = game.Content.Load<Texture2D>("gui/button_up");
+            m_gui_object_textures["ButtonHover"] = game.Content.Load<Texture2D>("gui/button_hover");
+            ui_manager.TextureDict = m_gui_object_textures;
 
             // Pink rect in middle
             pinky = game.Content.Load<Texture2D>("misc/pinky");
@@ -110,14 +134,39 @@ namespace ProjectTitan
             dots = new AnimatedGameObject(new Vector2(100, 100), dots_texture, 2, 3);
 
             // Init UI
-            panel1 = new Panel(ui.GetRootPanel, new Vector4(0.10f, 0.10f, 0.5f, 0.5f));
-            panel2 = new Panel(panel1, new Vector4(0.10f, 0.10f, 0.5f, 0.5f));
-            panel2.Enable = true;
+            panel1 = ui_manager.GetRootPanel.AddPanel(new Vector4(0.0f, 0.00f, 1f, 1f));
+            //panel2 = new Panel(ui_manager.GetRootPanel, new Vector4(0.2f, 0.1f, 0.6875f, 0.5083333f));
+            //panel2 = new Panel(ui_manager.GetRootPanel, new Vector4(0.40f, 0.00f, 0.6f, 0.6f));
+            //panel2.Enable = true;
+            button1 = panel1.AddButton(new Vector4(0.0f, 0.0f, 0.2f, 0.2f), Print);
 
             panel1.Texture = UI_overlay;
-            panel2.Texture = UI_overlay;
+            //panel2.Texture = UI_overlay;
             m_stagemanager = new StageManager(m_road_textures, m_scenery_textures, m_bike_tex, m_camera, pinky);
-            panel2.AddSlider(new Vector4(0.1f, 0.1f, 0.6f, 0.2f), (Texture2D)m_gui_object_textures["SliderContainer"], (Texture2D)m_gui_object_textures["Slider"], 50);
+            //panel1.AddSlider(new Vector2(0.1f, 0.1f), 50, false);
+            /*
+            Table table1 = panel1.AddTable(new Vector2(0.15f, 0.2f), (Texture2D)m_gui_object_textures["TableContainer"], (Texture2D)m_gui_object_textures["TableRow"]);
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            table1.AddRow();
+            */           
             m_game_started = true;
         }
 
@@ -130,8 +179,9 @@ namespace ProjectTitan
             m_stagemanager.Update(gameTime, mouse_state);
 
             dots.Update(gameTime);
-            ui.UpdateUI(mouse_state);
+            ui_manager.UpdateUI(mouse_state);
             m_last_keyboardstate = keyboard_state;
+
         }
 
         public void Draw(SpriteBatch sprite_batch)
@@ -145,8 +195,8 @@ namespace ProjectTitan
             sprite_batch.End();
 
             // draw UI
-            sprite_batch.Begin();
-            ui.DrawUI(sprite_batch);
+            sprite_batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, new RasterizerState { ScissorTestEnable = true }, null, null);
+            ui_manager.DrawUI(sprite_batch);
             sprite_batch.End();
 
         }
